@@ -15,7 +15,7 @@ while True:
     x, y, w, h = frame.shape[1]//2-148, frame.shape[0]//2-148, frame.shape[1]//2+148, frame.shape[0]//2+148
     cropped_frame = frame[y:h, x:w]
     # Display the frame
-    cv2.imshow("QR Scanner", cropped_frame)
+    cv2.imshow("QR Scanner", frame)
 
     # Check if the 's' key is pressed
     if cv2.waitKey(1) & 0xFF == ord('s'):
