@@ -15,7 +15,7 @@ def pre_processing(im):
 
     # Convert image to black and white
     # 128,255, you can change
-    _, im = cv2.threshold(im,128,255,cv2.THRESH_BINARY)
+    _, im = cv2.threshold(im,100,255,cv2.THRESH_BINARY)
     # Get the indexes of the black pixels
     black_pixels = np.where(im == 0)
     # Get the min and max points of the QR code
@@ -28,7 +28,7 @@ def pre_processing(im):
     # Get the shape of the QR code
     height, width  = qr_code.shape
     # constant value for white border
-    constant = 20
+    constant = 2
     # check diff from height and width
     border = max(height, width) - min(height, width)
     #check even or odd:
@@ -48,6 +48,16 @@ def pre_processing(im):
         else:
             qr_code = cv2.copyMakeBorder(qr_code, constant, constant, (border)//2 + constant, (border)//2 + constant, cv2.BORDER_CONSTANT, value=255)
     return qr_code
+
+def qr_resize(im, im1):
+    # take shape
+    width = im.shape[1]
+    height = im.shape[0]    
+    dim = (width, height)
+    # resize image
+    resized = cv2.resize(im1, dim, interpolation = cv2.INTER_AREA)
+    return resized
+
 
 # add white border to small shape image
 def equals_shape(im, im1):
@@ -80,7 +90,7 @@ def equals_shape(im, im1):
 
 def compare(real, snap, threshold = 0.60):
     # check 0 to 360 degrees
-    for degree in range(0,360,30):
+    for degree in range(0,360,15):
         # Get rotation matrix for the current angle
         rot_mat = cv2.getRotationMatrix2D((snap.shape[1] / 2, snap.shape[0] / 2), degree, 1)
         # Perform the rotation
@@ -98,7 +108,6 @@ def compare(real, snap, threshold = 0.60):
         if not window % 2 == 1:
             window -= 1
         ssim = metrics.structural_similarity(real, im_qr, win_size=window)
-        
         if ssim > threshold:
             print(ssim)
             return True  
@@ -116,18 +125,18 @@ def run(Snap):
         # Open real image
         Real = cv2.imread(f'Train/{QR}')
         Real1 = pre_processing(Real)
-
+    
         Snap1 = pre_processing(Snap)
+
+        Snap2 = qr_resize(Real1,Snap1)
         # Save the filtered image
-        cv2.imwrite('1.png', Snap1)
-        Real2, Snap2 = equals_shape(Real1, Snap1)
         
-        result = compare(Real2,Snap2)
+        Real2, Snap3 = equals_shape(Real1, Snap2)
+        #cv2.imwrite('QR.png', Snap2)
 
-
+        result = compare(Real2,Snap3)
         if result:
             print(QR, 'is matched.')
             break
         else:
             print(QR, 'is not mached')
-
