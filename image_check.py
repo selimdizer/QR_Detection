@@ -120,7 +120,7 @@ def run(Snap):
     # QR list
     QRs = os.listdir(QR_path)
 
-    for QR in QRs:
+    for i , QR in enumerate(QRs):
 
         # Open real image
         Real = cv2.imread(f'Train/{QR}')
@@ -137,6 +137,7 @@ def run(Snap):
         result = compare(Real2,Snap3)
         if result:
             print(QR, 'is matched.')
+            #increment(i)
             break
         else:
             print(QR, 'is not mached')
