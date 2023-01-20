@@ -3,7 +3,7 @@ from image_check import *
 import threading
 import time
 # Initialize the video capture
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 
 while True:
 

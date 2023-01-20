@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import os
-from skimage import metrics
+#from skimage import metrics
 
 # detect QR and add white border
 def pre_processing(im):
@@ -96,20 +96,21 @@ def compare(real, snap, threshold = 0.60):
         # Perform the rotation
         im_qr = cv2.warpAffine(snap, rot_mat, (snap.shape[1], snap.shape[0]))
         # 1-
-        #diff = abs(real - im_qr)
-        #mean_diff = np.mean(diff)
-        #mean_diff = (100-mean_diff)/100
+        diff = abs(real - im_qr)
+        mean_diff = np.mean(diff)
+        mean_diff = (100-mean_diff)/100
         #print(ssim_ab)
         #2-
         #mean_diff = np.mean((real - im_qr) ** 2)
         #3-
-        h, w = snap.shape[:2]
-        window = min(h, w)
-        if not window % 2 == 1:
-            window -= 1
-        ssim = metrics.structural_similarity(real, im_qr, win_size=window)
-        if ssim > threshold:
-            print(ssim)
+        #h, w = snap.shape[:2]
+        #window = min(h, w)
+        #if not window % 2 == 1:
+        #    window -= 1
+        #ssim = metrics.structural_similarity(real, im_qr, win_size=window)
+        
+        if mean_diff > threshold:
+            print(mean_diff)
             return True  
     return False
 
